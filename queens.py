@@ -23,5 +23,5 @@ def gen(row):
 
 for i in range(8):
     board[(0, i)] = 1  # place the initial Queen
-    gen(1)
+    gen(1)  # generate all the possibilities with the initial Queen
     board.__delitem__((0, i))  # remove the initial queen to place it again in a new cell
