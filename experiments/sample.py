@@ -57,7 +57,7 @@ def create_sineWave(fileName):
     make_copy(fileName)
 
 
-def make_reverse(fileName):
+def make_reverse_backup(fileName):
 
     ifile = wave.open(fileName)
     ofile = wave.open("reverse.wav", "w")
@@ -69,12 +69,11 @@ def make_reverse(fileName):
     dcs  = (None, 128, 0, None, 0)
     dc = dcs[sampwidth]
 
+
     for i in range(ifile.getnframes(), 0, -1):
         iframe = ifile.readframes(1)
 
         iframe = wave.struct.unpack(fmt, iframe)[0]
-
-        print iframe
 
         iframe -= dc
 
@@ -86,6 +85,28 @@ def make_reverse(fileName):
 
     ifile.close()
     ofile.close()
+
+def make_reverse(fileName):
+
+    w = wave.open(fileName)
+    (nchannel, width, rate, length, comptype, compname) = w.getparams()
+    print "[%s] %d HZ (%0.2fsec)" %(fileName, rate, length/float(rate))
+    frames = w.readframes(length)
+
+    a= N.array(wave.struct.unpack("%sh" %length*nchannel,frames))
+
+    newSignal = ''
+    for s in a[::-1]:
+       newSignal += wave.struct.pack('h',s)
+
+    w.close()
+
+    newW = wave.open("reversed_new.wav", "wb")
+    newW.setparams((nchannel, 2, rate, length, comptype, compname)) # channels set to 1, which means there won't be stereo in the wav
+    newW.writeframes(newSignal)
+    newW.close()
+
+
 
 make_reverse('cde.wav')
 
